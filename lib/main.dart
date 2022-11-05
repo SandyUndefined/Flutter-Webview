@@ -34,13 +34,7 @@ class MyApp extends StatelessWidget {
       title: 'Bharat AEPS',
       theme: ThemeData(primaryColor: colorPrimaryDark),
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Bharat AEPS'),
-            backgroundColor: const Color(0XFF130925),
-            toolbarHeight: 70,
-          ),
-          body: const Redirect()),
+      home: const Scaffold(body: Redirect()),
     );
   }
 }

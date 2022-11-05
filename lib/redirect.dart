@@ -1,5 +1,10 @@
-import 'package:cosmossoft/utils/checkinternet.dart';
+import 'dart:async';
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:cosmossoft/nointernet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 // ignore: prefer_collection_literals
@@ -19,43 +24,62 @@ class Redirect extends StatefulWidget {
 }
 
 class _RedirectState extends State<Redirect> {
-  int checkInt = 0;
-
+  late StreamSubscription<ConnectivityResult> networkSubscription;
+  bool connectionStatus = true;
   @override
   void initState() {
     super.initState();
-    Future<int> a = CheckInternet().checkInternetConnection();
-    a.then((value) {
-      if (value == 0) {
-        setState(() {
-          checkInt = 0;
-        });
-        print('No internet connect');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('No internet connection!'),
-        ));
-      } else {
-        setState(() {
-          checkInt = 1;
-        });
-        print('Internet connected');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Connected to the internet'),
-        ));
+    networkSubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      check();
+    });
+    check(); // Needed for the check on start
+  }
+
+  void check() {
+    Timer.periodic(new Duration(seconds: 1), (time) async {
+      final flutterWebViewPlugin = FlutterWebviewPlugin();
+      if (connectionStatus == false) flutterWebViewPlugin.reload();
+      try {
+        final result = await InternetAddress.lookup('google.com');
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          connectionStatus = true;
+        }
+      } on SocketException catch (_) {
+        connectionStatus = false;
+        Navigator.pop(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ConnectionLostScreen()));
       }
     });
   }
 
+  // @override
+  // void dispose() {
+  //   hasConnection = false;
+  //   super.dispose();
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return WebviewScaffold(
-      url: "https://aeps.bharataeps.com/",
-      javascriptChannels: jsChannels,
-      mediaPlaybackRequiresUserGesture: false,
-      geolocationEnabled: true,
-      withZoom: true,
-      withLocalStorage: true,
-      hidden: false,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Bharat AEPS'),
+        backgroundColor: const Color(0XFF130925),
+        toolbarHeight: 70,
+      ),
+      body: WebviewScaffold(
+        url: "https://aeps.bharataeps.com/",
+        javascriptChannels: jsChannels,
+        mediaPlaybackRequiresUserGesture: false,
+        geolocationEnabled: true,
+        withZoom: true,
+        withLocalStorage: true,
+        hidden: false,
+      ),
     );
   }
 }
