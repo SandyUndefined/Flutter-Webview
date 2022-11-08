@@ -67,12 +67,12 @@ class _RedirectState extends State<Redirect> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bharat AEPS'),
+        title: const Text('Barnwal Electronics'),
         backgroundColor: const Color(0XFF130925),
         toolbarHeight: 70,
       ),
       body: WebviewScaffold(
-        url: "https://aeps.bharataeps.com/",
+        url: "https://login.barnwalelectric.in/",
         javascriptChannels: jsChannels,
         mediaPlaybackRequiresUserGesture: false,
         geolocationEnabled: true,

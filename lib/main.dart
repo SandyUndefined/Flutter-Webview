@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Bharat AEPS',
+      title: 'Barnwal Electronics',
       theme: ThemeData(primaryColor: colorPrimaryDark),
       debugShowCheckedModeBanner: false,
       home: const Scaffold(body: Redirect()),
